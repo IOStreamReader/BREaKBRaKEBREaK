@@ -228,7 +228,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate,
     @objc private func showAbout() {
         let alert = NSAlert()
         alert.messageText = gameTitle
-        alert.informativeText = "所有代码为生成式人工智能生成。\n\n游戏包含 Three.js 等第三方库；本移植与修改代码由生成式人工智能生成。\n\nApple Silicon / Intel · 离线版 · 1.1\n推荐力度触控板，也支持键盘/鼠标备用模式。"
+        alert.informativeText = "所有代码为生成式人工智能生成。\n\n游戏包含 Three.js 等第三方库；本移植与修改代码由生成式人工智能生成。\n\nApple Silicon / Intel · 离线版 · 1.1.1\n推荐力度触控板，也支持键盘/鼠标备用模式。"
         alert.addButton(withTitle: "好")
         alert.runModal()
     }
@@ -252,8 +252,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate,
             }
           };
           const bootstrap = await BreakNative.call('bootstrap');
-          const initialGate = document.getElementById('continueBtn').disabled === !(BreakPressure.verified && BreakPressure.released);
+          const initialGate = BreakPressure.verified || document.getElementById('continueBtn').disabled;
           const defaultUI = document.getElementById('thresholdSlider').value === '100';
+          // Exercise the real WebKit button with simulated native samples. A
+          // trackpad click has pressure before its DOM click reaches the page.
+          BreakPressure.beginProbe();
+          BreakPressure.receive({value: .4, peak: .4, verified: true, gesture: 10001});
+          const calibrationReleaseGate = document.getElementById('continueBtn').disabled;
+          BreakPressure.receive({value: 0, peak: 0, verified: true, gesture: 10001});
+          const calibrationReady = !document.getElementById('continueBtn').disabled;
+          BreakPressure.receive({value: .3, peak: .3, verified: true, gesture: 10002});
+          const entryButtonEnabled = !document.getElementById('continueBtn').disabled;
+          document.getElementById('continueBtn').click();
+          const pressureEntryClick = document.getElementById('startup').classList.contains('hidden');
+          const entryPressureCleared = BreakPressure.sample() === 0;
+          BreakDesktop.showSettings();
+          BreakPressure.beginProbe();
+          const calibrationReset = document.getElementById('continueBtn').disabled;
           await BreakNative.call('settings', {threshold: 73});
           const updated = await BreakNative.call('bootstrap');
           const score = await BreakNative.call('score', {nickname: '本机自检', v0: 150, stopTime: 8});
@@ -285,9 +300,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate,
           return {success: bootstrap.threshold === 100 && defaultUI && updated.threshold === 73 &&
               board.entries.length === 1 && board.entries[0].score === 2813 &&
               diagnostics.webgl && diagnostics.frames > 0 && initialGate && requiresAcknowledgment &&
-              warningShown && fallbackAllowed && layoutFits && spaceDown && spaceUp && mouseDown && mouseUp,
+              warningShown && fallbackAllowed && layoutFits && spaceDown && spaceUp && mouseDown && mouseUp &&
+              calibrationReleaseGate && calibrationReady && entryButtonEnabled && pressureEntryClick &&
+              entryPressureCleared && calibrationReset,
               bootstrap, updated, score, diagnostics, initialGate, requiresAcknowledgment, warningShown,
-              fallbackAllowed, layoutFits, spaceDown, spaceUp, mouseDown, mouseUp};
+              fallbackAllowed, layoutFits, spaceDown, spaceUp, mouseDown, mouseUp,
+              calibrationReleaseGate, calibrationReady, entryButtonEnabled, pressureEntryClick,
+              entryPressureCleared, calibrationReset};
         })()
         """
         webView.callAsyncJavaScript("return await " + script, arguments: [:], in: nil, in: .page, completionHandler: { [weak self] result in

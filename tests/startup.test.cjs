@@ -51,13 +51,23 @@ vm.runInContext(fs.readFileSync(path.join(root, 'web/desktop.js'), 'utf8'), ctx)
   element('fallbackCancel').listeners.click();
   ctx.BreakPressure.receive({value: .4, peak: .4, verified: true, gesture: 1});
   assert.equal(element('continueBtn').disabled, true, 'Must release after verification');
+  element('continueBtn').listeners.click();
+  assert.equal(element('startup').classList.contains('hidden'), false, 'The initial calibration press must finish before continuing');
   ctx.BreakPressure.receive({value: 0, peak: 0, verified: true, gesture: 1});
   assert.equal(element('continueBtn').disabled, false);
+  // Physically clicking the button produces pressure again before WebKit's click.
+  ctx.BreakPressure.receive({value: .3, peak: .3, verified: true, gesture: 2});
+  assert.equal(ctx.BreakPressure.released, false);
+  assert.equal(element('continueBtn').disabled, false, 'The button press must not undo a completed calibration');
   element('continueBtn').listeners.click();
   assert.equal(element('startup').classList.contains('hidden'), true);
+  assert.equal(ctx.BreakPressure.sample(), 0, 'The entry click must not become gameplay pressure');
   ctx.BreakDesktop.showSettings();
   await element('probeBtn').listeners.click();
   assert.equal(element('continueBtn').disabled, true, 'Recheck must discard cached hardware success');
+  ctx.BreakPressure.receive({value: .2, peak: .2, verified: true, gesture: 3});
+  assert.equal(element('continueBtn').disabled, true, 'Recheck also requires a fresh calibration release');
+  ctx.BreakPressure.beginProbe();
   element('fallbackBtn').listeners.click();
   assert.equal(ctx.BreakControl.mode, 'pressure', 'Warning alone does not change the controls');
   await element('fallbackConfirm').listeners.click();
@@ -74,5 +84,5 @@ vm.runInContext(fs.readFileSync(path.join(root, 'web/desktop.js'), 'utf8'), ctx)
     await element('thresholdSlider').listeners.change();
     assert.equal(ctx.BreakPressure.threshold, Number(threshold) / 100);
   }
-  console.log('PASS: default 100%, hardware warning, fallback confirmation, mode switching, release gate and slider.');
+  console.log('PASS: default 100%, hardware warning, fallback confirmation, mode switching, completed calibration, pressure during entry click and slider.');
 })().catch(error => {console.error(error); process.exitCode = 1;});

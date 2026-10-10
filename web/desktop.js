@@ -5,10 +5,15 @@
   let loaded = false;
   let checking = false;
   let saving = false;
+  let calibrationComplete = false;
 
   function refresh() {
     const input = window.BreakPressure;
     const keyboard = window.BreakControl.mode === 'keyboard';
+    // Calibration must finish once. Later menu clicks also emit pressure and
+    // must not disable the button before WebKit delivers its click event.
+    if (!input.verified) calibrationComplete = false;
+    else if (input.released) calibrationComplete = true;
     const value = Math.round(input.value * 100);
     $('relativePressure').textContent = `${value}%`;
     $('relativeFill').style.width = `${value}%`;
@@ -23,7 +28,7 @@
       clearTimeout(probeTimer);
       checking = false;
       $('hardwareStatus').className = 'hardware-status ok';
-      $('hardwareStatus').textContent = input.released
+      $('hardwareStatus').textContent = calibrationComplete
         ? '已检测到兼容的力度触控板，可以开始。'
         : '已收到真实力度信号。请松开触控板后继续。';
       $('probeBtn').textContent = '重新检测';
@@ -31,7 +36,7 @@
       $('hardwareStatus').className = 'hardware-status fallback';
       $('hardwareStatus').textContent = '键盘/鼠标备用模式：按住空格或鼠标左键逐渐加力，松开卸力。无法体验真实按压力度。';
     }
-    $('continueBtn').disabled = !(loaded && !saving && window.BreakControl.ready && (keyboard || input.released));
+    $('continueBtn').disabled = !(loaded && !saving && window.BreakControl.ready && (keyboard || calibrationComplete));
     $('continueBtn').textContent = keyboard ? '进入游戏 · 键鼠模式' : '进入游戏';
     $('startBtn').disabled = !loaded || !window.BreakControl.ready;
     $('keyHint').textContent = keyboard
@@ -117,7 +122,7 @@
   $('probeBtn').addEventListener('click', checkHardware);
   $('continueBtn').addEventListener('click', () => {
     if (!loaded || saving || !window.BreakControl.ready ||
-        (window.BreakControl.mode === 'pressure' && !window.BreakPressure.released) ||
+        (window.BreakControl.mode === 'pressure' && !calibrationComplete) ||
         !$('fallbackWarning').classList.contains('hidden')) return;
     $('startup').classList.add('hidden');
   });

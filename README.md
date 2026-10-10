@@ -14,9 +14,9 @@ macOS 离线刹车小游戏。用 MacBook 力度触控板或支持 Force Touch �
 
 | 下载 | 适用设备 |
 | --- | --- |
-| [Universal 通用版（推荐）](https://github.com/IOStreamReader/BREaKBRaKEBREaK/releases/latest/download/BREaK%21BRaKE%21BREaK%21-Universal.zip) | Apple Silicon 与 Intel |
-| [arm64 版](https://github.com/IOStreamReader/BREaKBRaKEBREaK/releases/latest/download/BREaK%21BRaKE%21BREaK%21-arm64.zip) | Apple Silicon |
-| [Intel x86_64 版](https://github.com/IOStreamReader/BREaKBRaKEBREaK/releases/latest/download/BREaK%21BRaKE%21BREaK%21-Intel.zip) | Intel Mac |
+| [Universal 通用版（推荐）](https://github.com/IOStreamReader/BREaKBRaKEBREaK/releases/latest/download/BREaKBRaKEBREaK-Universal.zip) | Apple Silicon 与 Intel |
+| [arm64 版](https://github.com/IOStreamReader/BREaKBRaKEBREaK/releases/latest/download/BREaKBRaKEBREaK-arm64.zip) | Apple Silicon |
+| [Intel x86_64 版](https://github.com/IOStreamReader/BREaKBRaKEBREaK/releases/latest/download/BREaKBRaKEBREaK-Intel.zip) | Intel Mac |
 | [SHA-256 校验文件](https://github.com/IOStreamReader/BREaKBRaKEBREaK/releases/latest/download/SHA256SUMS.txt) | 验证下载包 |
 
 解压后，将 App 放入“应用程序”并打开。发布包使用本地 ad-hoc 签名，未经 Developer ID 签名或 Apple 公证。如果 macOS 阻止运行，请在确认来源后通过“系统设置 → 隐私与安全性”允许打开；无需关闭系统安全功能。

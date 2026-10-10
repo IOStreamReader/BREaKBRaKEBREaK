@@ -65,8 +65,8 @@ run(['codesign', '--force', '--sign', '-', '--entitlements', ROOT / 'macos/Entit
 run(['codesign', '--verify', '--deep', '--strict', intel_app])
 print(f'Built universal (arm64 + x86_64) app: {APP}')
 print(f'Built Intel x86_64 app: {intel_app}')
-for app, filename in [(APP, 'BREaK!BRaKE!BREaK!-Universal.zip'),
-                      (intel_app, 'BREaK!BRaKE!BREaK!-Intel.zip')]:
+for app, filename in [(APP, 'BREaKBRaKEBREaK-Universal.zip'),
+                      (intel_app, 'BREaKBRaKEBREaK-Intel.zip')]:
     run(['ditto', '-c', '-k', '--sequesterRsrc', '--keepParent', app, ROOT / 'dist' / filename])
 # Refresh the previous arm64 download too, preserving its original bundle name.
 arm_app = BUILD / 'package-arm64' / APP.name
@@ -77,8 +77,8 @@ shutil.copyfile(BUILD / 'BreakBrake-arm64', arm_app / 'Contents/MacOS/BreakBrake
 run(['codesign', '--force', '--sign', '-', '--entitlements', ROOT / 'macos/Entitlements.plist', arm_app])
 run(['codesign', '--verify', '--deep', '--strict', arm_app])
 run(['ditto', '-c', '-k', '--sequesterRsrc', '--keepParent', arm_app,
-     ROOT / 'dist/BREaK!BRaKE!BREaK!-arm64.zip'])
-packages = [ROOT / 'dist' / f'BREaK!BRaKE!BREaK!-{arch}.zip'
+     ROOT / 'dist/BREaKBRaKEBREaK-arm64.zip'])
+packages = [ROOT / 'dist' / f'BREaKBRaKEBREaK-{arch}.zip'
             for arch in ['Universal', 'Intel', 'arm64']]
 (ROOT / 'dist/SHA256SUMS.txt').write_text(''.join(
     f'{hashlib.sha256(package.read_bytes()).hexdigest()}  {package.name}\n'

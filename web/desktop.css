@@ -1,0 +1,52 @@
+button, input { -webkit-app-region: no-drag; }
+button:disabled { opacity: .38; cursor: default; }
+.menu { max-height: calc(100vh - 56px); overflow-y: auto; }
+.brake-btn { pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; gap: 8px; box-sizing: border-box; text-align: center; letter-spacing: 0; font-size: 15px; line-height: 1.25; }
+.brake-btn:disabled { opacity: 1; }
+.brake-icon { flex: none; height: 14px; width: 46%; }
+#brakeText { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 100%; line-height: 1.2; }
+.brake-caption { display: block; white-space: nowrap; font-size: 13px; font-weight: 600; }
+.brake-speed { display: block; white-space: nowrap; font-size: 19px; font-variant-numeric: tabular-nums; }
+.brake-speed small { font-size: 11px; font-weight: 500; }
+.keyboard-mode .brake-btn:not(:disabled) { pointer-events: auto; cursor: pointer; }
+.local-note { color: #b3a6a0; font-size: 12px; margin-bottom: 0; }
+.startup { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 100; padding: 24px; background: rgba(12, 9, 12, .86); backdrop-filter: blur(18px); }
+.startup.hidden, .pause-overlay.hidden { display: none; }
+.startup-card { width: min(540px, 100%); max-height: calc(100vh - 48px); overflow-y: auto; border: 1px solid rgba(255,255,255,.17); border-radius: 24px; padding: 28px 32px; color: #f5efe6; background: linear-gradient(150deg, #29201f, #151015); box-shadow: 0 24px 100px #0009; }
+.startup-card h2 { margin: 10px 0 18px; font-size: 28px; }
+.ai-disclosure { font-size: 15px; padding: 12px 15px; border-left: 3px solid #ff6a3d; background: #ff6a3d0d; margin-bottom: 6px; }
+.disclosure-detail { font-size: 11px; color: #a99b94; line-height: 1.5; margin-top: 0; }
+.startup-intro { font-size: 13px; line-height: 1.7; color: #c7bbb3; }
+.control-options { display: flex; gap: 8px; margin: 14px 0; }
+.control-option { flex: 1; padding: 10px 8px; border-radius: 10px; border: 1px solid #ffffff23; background: #ffffff06; color: #c7bbb3; font-size: 12px; cursor: pointer; }
+.control-option.selected { color: #f1dcae; border-color: #e6aa7055; background: #e6aa7010; }
+.threshold-setting input:disabled { opacity: .35; cursor: default; }
+.hardware-status.fallback { color: #f1c58e; }
+.fallback-warning { position: fixed; inset: 0; z-index: 120; display: flex; align-items: center; justify-content: center; padding: 24px; background: #080509c9; backdrop-filter: blur(10px); }
+.fallback-warning.hidden { display: none; }
+.fallback-card { width: min(460px, 100%); border: 1px solid #ffffff29; border-radius: 20px; padding: 28px; background: #241b20; color: #f5efe6; box-shadow: 0 24px 90px #0009; }
+.fallback-card h2 { font-size: 23px; margin: 0 0 16px; }
+.fallback-card p { font-size: 14px; line-height: 1.8; color: #d0beb4; margin-bottom: 22px; }
+.threshold-setting { margin: 22px 0 16px; }
+.threshold-setting label { font-size: 14px; font-weight: 600; }
+.threshold-setting output { float: right; color: #ff9c78; font-size: 24px; font-variant-numeric: tabular-nums; font-weight: 700; }
+.threshold-setting input { width: 100%; height: 26px; margin: 12px 0 4px; accent-color: #ff6a3d; cursor: pointer; }
+.range-labels { display: flex; justify-content: space-between; color: #b9aaa1; font-size: 11px; }
+.threshold-setting p, .probe-area p { margin: 9px 0 0; font-size: 12px; line-height: 1.6; color: #b9aaa1; }
+.threshold-setting .settings-error { color: #ff7368; }
+.probe-area { padding: 18px; border: 1px dashed #76605a; border-radius: 12px; background: #ffffff04; user-select: none; }
+.probe-area > span { font-size: 13px; }
+.probe-area strong { float: right; font-size: 17px; color: #f1dcae; font-variant-numeric: tabular-nums; }
+.probe-track { height: 5px; background: #ffffff15; border-radius: 3px; margin-top: 14px; overflow: hidden; }
+#probeFill { height: 100%; width: 0; background: #ff8a58; }
+.hardware-status { color: #c5b6ad; font-size: 12px; min-height: 36px; line-height: 1.6; margin: 14px 0; }
+.hardware-status.ok { color: #79dfad; }
+.hardware-status.error { color: #ff7e72; }
+.startup-card .actions { margin-bottom: 0; }
+.relative-pressure { position: fixed; z-index: 10; bottom: 18px; left: 24px; width: 140px; font-size: 11px; color: #ddcfc4; pointer-events: none; }
+.relative-pressure > div { height: 3px; background: #ffffff20; margin-top: 5px; overflow: hidden; }
+.relative-pressure i { display: block; height: 100%; width: 0; background: #ff9c78; }
+.relative-pressure b { float: right; font-variant-numeric: tabular-nums; }
+.pause-overlay { position: fixed; z-index: 90; inset: 0; background: #100a12a0; backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; flex-direction: column; font-size: 28px; font-weight: 700; }
+.pause-overlay span { display: block; font-size: 14px; font-weight: 400; margin-top: 10px; color: #d2c2b7; }
+@media (max-height: 760px) { .startup-card { padding: 20px 26px; } .startup-card h2 { font-size: 25px; margin: 8px 0 12px; } .threshold-setting { margin-top: 14px; } .probe-area { padding: 13px 16px; } }

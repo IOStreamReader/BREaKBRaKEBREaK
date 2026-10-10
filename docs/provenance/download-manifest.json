@@ -1,0 +1,22 @@
+{
+  "source": "https://breaking.de5.net/",
+  "download_date": "2026-10-10",
+  "scope": "Public frontend deployment files; original source and backend unavailable",
+  "files": [
+    {
+      "path": "assets/index-BMfj2Faj.js",
+      "bytes": 746695,
+      "sha256": "d93b161666d943e642f925c7cbd36bf9f77c51b45f9ec97f4f0c943118bbf133"
+    },
+    {
+      "path": "assets/index-D0EtOSyi.css",
+      "bytes": 10953,
+      "sha256": "c0095f4a4b9abdf0be51f1a1a70078d952d4d204b4b09fa444c8cb60cfa6c909"
+    },
+    {
+      "path": "index.html",
+      "bytes": 5286,
+      "sha256": "f8b775a2cef84a6b0781ed9a0edd90e2ac91a4d9dfd59df88915f66df9e5406d"
+    }
+  ]
+}

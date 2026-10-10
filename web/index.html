@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#120d10" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>BREaK!BRaKE!BREaK!</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛑</text></svg>" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; media-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+    <link rel="stylesheet" href="original.css">
+    <link rel="stylesheet" href="desktop.css">
+    <script defer src="native.js"></script>
+    <script defer src="game.js"></script>
+    <script defer src="desktop.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <div id="hud" class="hidden">
+      <div class="hud-top">
+        <div class="hud-chip">
+          <span class="label">制动计时</span>
+          <span id="hudTimer" class="value mono">0.000s</span>
+        </div>
+        <div class="hud-chip">
+          <span class="label">距路障</span>
+          <span id="hudDistance" class="value mono">2600m</span>
+        </div>
+      </div>
+
+      <div class="speedo">
+        <svg viewBox="0 0 200 120" class="speedo-svg">
+          <path class="speedo-track" d="M 20 110 A 80 80 0 0 1 180 110" />
+          <path id="speedoArc" class="speedo-arc" d="M 20 110 A 80 80 0 0 1 180 110" />
+          <line id="speedoMark" class="speedo-mark" x1="0" y1="0" x2="0" y2="0" />
+        </svg>
+        <div class="speedo-readout">
+          <span id="hudSpeed" class="speed mono">0</span>
+          <span class="unit">km/h</span>
+        </div>
+      </div>
+
+      <div class="force">
+        <div id="forceLabel" class="force-label">触控板力度</div>
+        <div class="force-bar">
+          <div id="forceFill" class="force-fill"></div>
+          <div class="force-limit"><span id="hudThreshold">100%</span></div>
+        </div>
+        <div id="forceValue" class="force-value mono">0%</div>
+      </div>
+
+      <button id="brakeBtn" class="brake-btn" type="button" disabled aria-label="刹车">
+        <span class="brake-icon"></span>
+        <span id="brakeText">按压触控板</span>
+      </button>
+    </div>
+
+    <div id="countdown" class="countdown hidden"></div>
+    <div id="toast" class="toast hidden"></div>
+
+    <section id="menu" class="panel menu">
+      <div class="brand">BREaK!BRaKE!BREaK!</div>
+      <h1>极限刹车挑战</h1>
+      <p class="tagline">用指尖控制制动，在力度极限前稳稳停住。</p>
+      <ul class="rules">
+        <li>车辆自动全力加速，<b>100 km/h</b> 后才能踩刹车</li>
+        <li id="brakeRule">按压力度触控板切断动力；<b>按得越重，制动越强</b></li>
+        <li id="limitRule">相对力度达到设定阈值，<b class="danger">踏板断裂</b>，整车翻滚失败</li>
+        <li>得分 = 刹车初速度² ÷ 刹停用时，越高越好</li>
+      </ul>
+      <div class="actions">
+        <button id="startBtn" class="btn primary">开始挑战</button>
+        <button id="boardBtn" class="btn">本地排行榜</button>
+      </div>
+      <button id="muteBtn" class="mute">音效：开</button>
+      <button id="settingsBtn" class="mute">力度设置与设备检测</button>
+      <p id="keyHint" class="hint-keys"></p>
+      <p class="local-note">成绩仅保存在这台 Mac，游戏完全离线。</p>
+    </section>
+
+    <section id="result" class="panel result hidden">
+      <h2 id="resultTitle">刹停成功</h2>
+      <p id="resultSub" class="result-sub"></p>
+      <div class="stats">
+        <div><span class="label">刹车初速度</span><span id="statV0" class="mono">-</span></div>
+        <div><span class="label">刹停用时</span><span id="statTime" class="mono">-</span></div>
+        <div><span class="label">制动距离</span><span id="statDist" class="mono">-</span></div>
+        <div><span id="peakLabel" class="label">最大触控板力度</span><span id="statForce" class="mono">-</span></div>
+      </div>
+      <div id="chartBox" class="chart-box">
+        <div class="chart-head">
+          <span class="chart-title">制动过程</span>
+          <span class="legend"><i class="dot dot-speed"></i>车速 km/h</span>
+          <span class="legend"><i class="dot dot-force"></i><span id="forceLegend">触控板力度 %</span></span>
+          <span class="legend"><i class="dash"></i>断裂极限</span>
+        </div>
+        <canvas id="brakeChart" class="chart"></canvas>
+      </div>
+      <div class="score-box">
+        <span class="label">得分</span>
+        <span id="statScore" class="score mono">0</span>
+      </div>
+      <form id="submitForm" class="submit-form">
+        <input id="nicknameInput" maxlength="12" placeholder="输入昵称保存到本机" autocomplete="off" />
+        <button id="submitBtn" class="btn primary" type="submit">保存成绩</button>
+      </form>
+      <p id="submitMsg" class="submit-msg"></p>
+      <div class="actions">
+        <button id="retryBtn" class="btn primary">再来一次</button>
+        <button id="resultBoardBtn" class="btn">本地排行榜</button>
+      </div>
+    </section>
+
+    <section id="board" class="panel board hidden">
+      <div class="board-head">
+        <h2>本地排行榜 TOP 50</h2>
+        <button id="boardClose" class="close" aria-label="关闭">×</button>
+      </div>
+      <div class="board-cols"><span>#</span><span>昵称</span><span>初速度</span><span>用时</span><span>得分</span></div>
+      <ol id="boardList" class="board-list"></ol>
+    </section>
+
+    <div id="pauseOverlay" class="pause-overlay hidden" role="status">游戏已暂停<span>返回窗口后继续</span></div>
+    <section id="startup" class="startup" role="dialog" aria-modal="true" aria-labelledby="startupTitle">
+      <div class="startup-card">
+        <div class="brand">BREaK!BRaKE!BREaK!</div>
+        <h2 id="startupTitle">先感受一下刹车</h2>
+        <p class="ai-disclosure">所有代码为生成式人工智能生成。</p>
+        <p class="disclosure-detail">游戏包含 Three.js 等第三方库；本移植与修改代码由生成式人工智能生成。</p>
+        <p class="startup-intro">推荐使用 MacBook 力度触控板或支持 Force Touch 的妙控触控板。没有兼容设备时，也可选择键盘/鼠标备用模式。</p>
+        <div class="control-options" role="group" aria-label="操控方式">
+          <button id="forceModeBtn" class="control-option selected" aria-pressed="true">力度触控板 · 首选</button>
+          <button id="fallbackBtn" class="control-option" aria-pressed="false">键盘/鼠标 · 备用</button>
+        </div>
+        <div class="threshold-setting">
+          <label for="thresholdSlider">踏板断裂的相对力度阈值</label>
+          <output id="thresholdValue" for="thresholdSlider">100%</output>
+          <input id="thresholdSlider" type="range" min="1" max="100" step="1" value="100">
+          <div class="range-labels"><span>1% · 灵敏</span><span>100% · 较重</span></div>
+          <p>此滑块仅用于力度触控板模式。按得越重，制动越强；达到阈值会翻车。这里是相对力度，不是牛顿或克重。</p>
+          <p id="settingsError" class="settings-error" role="alert"></p>
+        </div>
+        <div id="probeArea" class="probe-area">
+          <span>力度检测区</span><strong id="probePressure">0%</strong>
+          <div class="probe-track"><div id="probeFill"></div></div>
+          <p>将光标停在这里，按下触控板并缓慢加力，再松开。</p>
+        </div>
+        <p id="hardwareStatus" class="hardware-status" role="status">尚未验证设备。请先检测力度触控板。</p>
+        <div class="actions"><button id="probeBtn" class="btn">检测设备</button><button id="continueBtn" class="btn primary" disabled>进入游戏</button></div>
+      </div>
+    </section>
+    <section id="fallbackWarning" class="fallback-warning hidden" role="alertdialog" aria-modal="true" aria-labelledby="fallbackTitle">
+      <div class="fallback-card">
+        <h2 id="fallbackTitle">无法获得完整体验</h2>
+        <p id="fallbackMessage">未检测到兼容的力度触控板。键盘/鼠标模式无法提供真实按压力度体验。</p>
+        <div class="actions"><button id="fallbackCancel" class="btn">返回检测</button><button id="fallbackConfirm" class="btn primary">使用键盘/鼠标</button></div>
+      </div>
+    </section>
+    <div id="relativeMeter" class="relative-pressure"><span>当前力度 <b id="relativePressure">0%</b></span><div><i id="relativeFill"></i></div></div>
+    <div id="loading" class="loading">正在生成 3D 场景…</div>
+  </body>
+</html>

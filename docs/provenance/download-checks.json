@@ -1,0 +1,37 @@
+[
+  {
+    "path": "/assets/index-BMfj2Faj.js.map",
+    "status": "200",
+    "type": "text/html",
+    "preview": "<!doctype html>\n<html lang=\"zh-CN\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta\n      name=\"viewport\"\n      content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover\"\n    />\n    <meta name=\"theme-color\" content=\"#120d10\" />\n    <meta name=\"apple-mobile-web-app-capable\" content=\"yes\" />\n    <title>极限",
+    "error": null
+  },
+  {
+    "path": "/package.json",
+    "status": "200",
+    "type": "text/html",
+    "preview": "<!doctype html>\n<html lang=\"zh-CN\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta\n      name=\"viewport\"\n      content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover\"\n    />\n    <meta name=\"theme-color\" content=\"#120d10\" />\n    <meta name=\"apple-mobile-web-app-capable\" content=\"yes\" />\n    <title>极限",
+    "error": null
+  },
+  {
+    "path": "/robots.txt",
+    "status": "200",
+    "type": "text/html",
+    "preview": "<!doctype html>\n<html lang=\"zh-CN\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta\n      name=\"viewport\"\n      content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover\"\n    />\n    <meta name=\"theme-color\" content=\"#120d10\" />\n    <meta name=\"apple-mobile-web-app-capable\" content=\"yes\" />\n    <title>极限",
+    "error": null
+  },
+  {
+    "path": "/sitemap.xml",
+    "status": "200",
+    "type": "text/html",
+    "preview": "<!doctype html>\n<html lang=\"zh-CN\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta\n      name=\"viewport\"\n      content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover\"\n    />\n    <meta name=\"theme-color\" content=\"#120d10\" />\n    <meta name=\"apple-mobile-web-app-capable\" content=\"yes\" />\n    <title>极限",
+    "error": null
+  },
+  {
+    "path": "/api/leaderboard?limit=1",
+    "status": "503",
+    "type": "application/json; charset=utf-8",
+    "preview": "{\"error\":\"排行榜今天的读取额度用完了，请明天再试\"}",
+    "error": null
+  }
+]

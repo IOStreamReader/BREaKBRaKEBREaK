@@ -99,6 +99,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate,
                 guard let name = body["nickname"] as? String, let v0 = body["v0"] as? Double,
                       let time = body["stopTime"] as? Double else { throw StoreError.invalidScore }
                 replyHandler(try store.save(nickname: name, v0: v0, stopTime: time), nil)
+            case "brakeSnap":
+                guard gameActive, inputMode == "pressure", NSApp.isActive, window.isKeyWindow else {
+                    replyHandler(["ok": false], nil); return
+                }
+                // Public AppKit exposes patterns, not amplitude. A short burst
+                // distinguishes the snap from the system's ordinary click.
+                for delay in [0.0, 0.065, 0.13] {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+                        guard let self, NSApp.isActive, self.window.isKeyWindow,
+                              self.inputMode == "pressure" else { return }
+                        NSHapticFeedbackManager.defaultPerformer.perform(.generic, performanceTime: .now)
+                    }
+                }
+                replyHandler(["ok": true], nil)
             case "session":
                 let enabled = (body["active"] as? Bool) ?? false
                 guard !enabled || inputMode == "keyboard" || pressure.verified else {

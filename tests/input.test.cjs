@@ -9,11 +9,13 @@ function target() {
     fire(name, event = {}) { for (const fn of listeners[name] ?? []) fn({preventDefault() {}, ...event}); }
   };
 }
+const messages = [];
 const win = target(), app = target(), brake = target(), body = target();
 const ctx = {...win, console, document: {body, activeElement: body,
   getElementById: id => ({app, brakeBtn: brake}[id] ?? target())},
   BreakGame: {isPlaying: () => true, diagnostics: () => ({phase: 'braking'})},
   webkit: {messageHandlers: {native: {async postMessage(message) {
+    messages.push(message);
     return message.action === 'mode' ? {mode: message.mode} : {ok: true};
   }}}}
 };
@@ -23,11 +25,21 @@ vm.runInContext(fs.readFileSync(path.join(__dirname, '../web/native.js'), 'utf8'
 ctx.BreakControl.bind();
 const control = ctx.BreakControl;
 (async () => {
+  ctx.BreakNative.brakeSnap();
+  assert.equal(messages.filter(m => m.action === 'brakeSnap').length, 0);
   ctx.BreakNative.setSession(true);
+  ctx.BreakNative.brakeSnap();
+  assert.equal(messages.filter(m => m.action === 'brakeSnap').length, 1);
+  ctx.BreakPressure.setPaused(true);
+  ctx.BreakNative.brakeSnap();
+  assert.equal(messages.filter(m => m.action === 'brakeSnap').length, 1, 'Paused games cannot vibrate');
+  ctx.BreakPressure.setPaused(false);
   app.fire('pointerdown', {pointerType: 'mouse', button: 0});
   ctx.fire('keydown', {code: 'Space'});
   assert.equal(control.sample(), 0, 'Mouse and Space do not drive pressure mode');
   await control.setMode('keyboard', true);
+  ctx.BreakNative.brakeSnap();
+  assert.equal(messages.filter(m => m.action === 'brakeSnap').length, 1, 'Keyboard mode cannot vibrate');
   ctx.BreakNative.setSession(true);
   ctx.fire('keydown', {code: 'Space', repeat: false});
   assert.equal(control.sample(), 1);

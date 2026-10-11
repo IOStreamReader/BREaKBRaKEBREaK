@@ -6,10 +6,25 @@
   let checking = false;
   let saving = false;
   let calibrationComplete = false;
+  let probingInside = false;
+  function clearProbePressure() {
+    probingInside = false;
+    $('probePressure').textContent = '0%';
+    $('probeFill').style.width = '0%';
+  }
+  $('probeArea').addEventListener('pointerdown', event => {
+    if (event.button === 0 && event.pointerType === 'mouse') probingInside = true;
+  });
+  for (const name of ['pointerleave', 'pointercancel']) {
+    $('probeArea').addEventListener(name, clearProbePressure);
+  }
+  for (const name of ['pointerup', 'blur']) window.addEventListener(name, clearProbePressure);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) clearProbePressure(); });
 
   function refresh() {
     const input = window.BreakPressure;
     const keyboard = window.BreakControl.mode === 'keyboard';
+    if (keyboard || input.paused) clearProbePressure();
     // Calibration must finish once. Later menu clicks also emit pressure and
     // must not disable the button before WebKit delivers its click event.
     if (!input.verified) calibrationComplete = false;
@@ -64,6 +79,7 @@
 
   async function checkHardware() {
     clearTimeout(probeTimer);
+    clearProbePressure();
     try {
       await window.BreakControl.setMode('pressure');
       window.BreakPressure.beginProbe();
@@ -97,6 +113,8 @@
       refresh();
     },
     rawPressure(value) {
+      if (!probingInside || $('startup').classList.contains('hidden') ||
+          window.BreakPressure.paused || window.BreakControl.mode !== 'pressure') value = 0;
       $('probePressure').textContent = `${Math.round(value * 100)}%`;
       $('probeFill').style.width = `${value * 100}%`;
       if (checking && window.BreakPressure.verified) refresh();
@@ -124,6 +142,7 @@
     if (!loaded || saving || !window.BreakControl.ready ||
         (window.BreakControl.mode === 'pressure' && !calibrationComplete) ||
         !$('fallbackWarning').classList.contains('hidden')) return;
+    clearProbePressure();
     $('startup').classList.add('hidden');
   });
   $('settingsBtn').addEventListener('click', () => window.BreakDesktop.showSettings());

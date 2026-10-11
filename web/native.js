@@ -39,6 +39,10 @@
       this.state.nickname = nickname;
       return result;
     },
+    brakeSnap() {
+      if (!sessionEnabled || paused || window.BreakControl.mode !== 'pressure') return;
+      this.call('brakeSnap').catch(() => {});
+    },
     setSession(active) {
       sessionEnabled = active;
       pressure = peak = 0;

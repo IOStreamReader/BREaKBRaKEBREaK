@@ -18,7 +18,7 @@ function element(id) {
 }
 let timers = new Map(), serial = 0;
 element('fallbackWarning').classList.add('hidden');
-const ctx = {console, document: {getElementById: element, body: element('body')}, addEventListener() {},
+const ctx = {console, document: {getElementById: element, body: element('body'), addEventListener() {}}, addEventListener() {},
   setTimeout(fn) { const id = ++serial; timers.set(id, fn); return id; },
   clearTimeout(id) { timers.delete(id); },
   webkit: {messageHandlers: {native: {async postMessage(message) {
@@ -41,6 +41,14 @@ vm.runInContext(fs.readFileSync(path.join(root, 'web/desktop.js'), 'utf8'), ctx)
   assert.equal(element('startBtn').disabled, true);
   assert.equal(element('nicknameInput').value, '本地玩家');
   assert.equal(element('thresholdSlider').value, 100);
+  ctx.BreakDesktop.rawPressure(.6);
+  assert.equal(element('probeFill').style.width, '0%', 'Outside presses cannot move the probe meter');
+  element('probeArea').listeners.pointerdown({button: 0, pointerType: 'mouse'});
+  ctx.BreakDesktop.rawPressure(.6);
+  assert.equal(element('probeFill').style.width, '60%', 'Presses inside the probe show real pressure');
+  element('probeArea').listeners.pointerleave();
+  ctx.BreakDesktop.rawPressure(.8);
+  assert.equal(element('probeFill').style.width, '0%', 'Leaving the probe clears and gates its meter');
   await element('probeBtn').listeners.click();
   for (const fn of [...timers.values()]) fn();
   assert.ok(element('hardwareStatus').textContent.includes('未检测到兼容的力度信号'));

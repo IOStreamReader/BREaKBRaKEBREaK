@@ -59,7 +59,11 @@ replace_once('function k_(){p_.unlock(),O_()',
 replace_once('function M_(e){let t=m_.step(e,g_||__);__=!1,A_(t)}',
              'function M_(e){let input=BreakControl.sample();g_=input>0;let t=m_.step(e,input);A_(t)}')
 replace_once('case`stopped`:c_.setMode', 'case`stopped`:BreakNative.setSession(false);c_.setMode')
-replace_once('case`crash`:{let e=', 'case`crash`:{BreakNative.setSession(false);let e=')
+replace_once('case`crash`:{let e=', 'case`crash`:{if(t.reason===`brake_snap`)BreakNative.brakeSnap();BreakNative.setSession(false);let e=')
+
+# AppKit provides the trackpad feedback; normal braking has no app vibration.
+replace_once('function N_(e){`vibrate`in navigator&&navigator.vibrate(e)}',
+             'function N_(e){}')
 
 # The brake icon is clickable only in the explicitly selected fallback mode.
 replace_once('this.brakeBtn.disabled=!(e.canBrake||e.braking),',
